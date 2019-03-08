@@ -12,7 +12,7 @@
   "author": "remrob",
   "license": "MIT",
   "dependencies": {
-    "bootstrap": "^4.2.1",
+    "bootstrap": "^4.3.1",
     "cookie": "^0.3.1",
     "dompurify": "^1.0.10",
     "jquery": "^3.3.1",
