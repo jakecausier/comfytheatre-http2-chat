@@ -1,0 +1,84 @@
+@import '_variables';
+@import '~bootstrap/scss/bootstrap';
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#chatEntryPoint {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $body-bg;
+  z-index: 1000;
+
+  div {
+    max-width: 400px;
+    width: 100%;
+  }
+}
+
+#chatContainer {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 40px;
+
+  #chat {
+    grid-column: 1;
+    grid-row: 1;
+    overflow-y: auto;
+
+    .message {
+      display: block;
+      padding: 10px;
+      background: $black;
+
+      .user {
+        display: block;
+      }
+      .content {
+        display: block;
+      }
+    }
+    .message:nth-of-type(odd) {
+      background: $grey;
+    }
+  }
+  #chatControls {
+    grid-column: 1;
+    grid-row: 2;
+
+    input {
+      height: 40px;
+    }
+  }
+  #chatErrors {
+    position: absolute;
+    display: none;
+    left: 0;
+    right: 0;
+    background: $danger;
+    color: white;
+    bottom: 40px;
+    padding: $input-padding-y $input-padding-x;
+  }
+  #users {
+    position: absolute;
+    right: -400px;
+    top: 0;
+    max-width: 400px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    border-left: 1px solid white;
+    z-index: 10;
+    padding: 5px;
+  }
+}

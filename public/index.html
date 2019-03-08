@@ -1,0 +1,50 @@
+<html>
+
+<head>
+  <meta charset="utf-8"/>
+  <title>Chatroom</title>
+  <link href="site.css" rel="stylesheet">
+  <script src="chat.js"/></script>
+</head>
+
+<body>
+  <div id="chatEntryPoint">
+    <div class="grid">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input aria-describedby="username" class="form-control" type="text" id="username" />
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn-primary" id="enterChat">
+          Enter chat
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="chatContainer">
+    <div id="chat"></div>
+
+    <div id="chatControls">
+      <div class="input-group">
+
+        <input id="msg" type="text" class="form-control" placeholder="Your Message" aria-label="Message" maxlength="600">
+        <div class="input-group-append">
+          <button id="sendMessage" class="btn btn-outline-secondary" type="submit">Send</button>
+        </div>
+
+        <button id="sendMessage" class="btn btn-outline-secondary" type="submit">Help</button>
+      </div>
+    </div>
+
+    <div id="chatErrors"><span id="inputErrors"></span></div>
+
+    <div id="users">
+      <h4>Users:</h4>
+      <div id="userList"></div>
+    </div>
+  </div>
+
+</body>
+</html>

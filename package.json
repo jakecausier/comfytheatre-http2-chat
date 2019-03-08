@@ -1,0 +1,31 @@
+{
+  "name": "http2-chat-example",
+  "version": "1.0.0",
+  "description": "HTTP/2 Push example",
+  "main": "server.js",
+  "scripts": {
+    "watch": "NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "compile": "NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "compile-production": "NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "start": "node server.js"
+  },
+  "author": "remrob",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^4.2.1",
+    "cookie": "^0.3.1",
+    "dompurify": "^1.0.10",
+    "jquery": "^3.3.1",
+    "jsdom": "^13.2.0",
+    "laravel-mix": "^4.0.14",
+    "mime-types": "^2.1.21",
+    "popper.js": "^1.14.7"
+  },
+  "devDependencies": {
+    "css-loader": "^2.1.0",
+    "resolve-url-loader": "^2.3.1",
+    "sass": "^1.17.0",
+    "sass-loader": "^7.1.0",
+    "vue-template-compiler": "^2.6.3"
+  }
+}
