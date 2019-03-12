@@ -11,7 +11,7 @@ const { JSDOM } = require('jsdom');
 const window = (new JSDOM('')).window;
 const DOMPurify = createDOMPurify(window);
 
-const URL = 'test.comfytheatre.co.uk'
+const URL = 'localhost';
 const { HTTP2_HEADER_PATH } = http2.constants
 const PORT = process.env.PORT || 4000
 const PUBLIC_PATH = path.join(__dirname, './public')
@@ -125,8 +125,9 @@ const onRequest = (req, res) => {
 
   // Push with index.html
   if (reqPath === '/index.html') {
-    push(res.stream, '/simple.css')
-    push(res.stream, '/script.js')
+    push(res.stream, '/site.css')
+    push(res.stream, '/fontawesome/fontawesome.css')
+    push(res.stream, '/chat.js')
   }
 
   // Serve file
@@ -136,8 +137,10 @@ const onRequest = (req, res) => {
 }
 
 const server = http2.createSecureServer({
-  cert: fs.readFileSync('/etc/letsencrypt/live/test.comfytheatre.co.uk/fullchain.pem'),
-  key: fs.readFileSync('/etc/letsencrypt/live/test.comfytheatre.co.uk/privkey.pem')
+  //cert: fs.readFileSync('/etc/letsencrypt/live/test.comfytheatre.co.uk/fullchain.pem'),
+  //key: fs.readFileSync('/etc/letsencrypt/live/test.comfytheatre.co.uk/privkey.pem')
+  cert: fs.readFileSync(path.join(__dirname, './ssl/server.crt')),
+  key: fs.readFileSync(path.join(__dirname, './ssl/server.key'))
 }, onRequest);
 
 

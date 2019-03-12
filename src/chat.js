@@ -4,6 +4,7 @@
 console.log('Script loaded');
 let source = null;
 const DOMPurify = require('dompurify');
+const URL = document.location.protocol + "//" + document.location.hostname;
 
 window.onload = () => {
   const chatEntryPoint = document.getElementById("chatEntryPoint");
@@ -49,7 +50,7 @@ function sendMessage() {
     document.getElementById('inputErrors').innerText = "Your message is too long."
   } else {
     document.getElementById('chatErrors').style.display = "none";
-    fetch('/message', {
+    fetch(URL + ':4000/message', {
       method: "POST",
       credentials: 'include',
       headers: {
@@ -64,7 +65,7 @@ function sendMessage() {
 }
 
 function loadUsers() {
-  fetch('/users')
+  fetch(URL + ':4000/users')
   .then(response => response.json())
   .then(json => {
     document.getElementById("userList").innerHTML = json.userList[0] ? json.userList.join('<br>') : 'No user';
@@ -92,7 +93,7 @@ function enterChat() {
   chatEntryPoint.style.display = "none";
   chatControls.style.display = "block";
 
-  source = new EventSource("/register");
+  source = new EventSource(URL + ':4000/register');
 
   source.onerror = (e) => {
     console.log("EventSource failed", e);

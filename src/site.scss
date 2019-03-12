@@ -1,6 +1,9 @@
 @import '_variables';
 @import '~bootstrap/scss/bootstrap';
 
+//@import "./fontawesome/fontawesome.scss";
+//@import "./fontawesome/solid.scss";
+
 body {
   width: 100vw;
   height: 100vh;
@@ -39,6 +42,8 @@ body {
       display: block;
       padding: 10px;
       background: $black;
+      border-left: 5px solid;
+      border-color: white;
 
       .user {
         display: block;
@@ -46,9 +51,6 @@ body {
       .content {
         display: block;
       }
-    }
-    .message:nth-of-type(odd) {
-      background: $grey;
     }
   }
   #chatControls {

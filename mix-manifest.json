@@ -1,4 +1,5 @@
 {
     "/public/chat.js": "/public/chat.js",
-    "/public/site.css": "/public/site.css"
+    "/public/site.css": "/public/site.css",
+    "/public/fontawesome/fontawesome.css": "/public/fontawesome/fontawesome.css"
 }
