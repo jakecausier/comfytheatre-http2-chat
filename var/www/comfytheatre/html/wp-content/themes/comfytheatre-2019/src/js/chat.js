@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -1408,26 +1408,14 @@ function makeMessageNicer(user, msg) {
 
 /***/ }),
 
-/***/ "./src/site.scss":
-/*!***********************!*\
-  !*** ./src/site.scss ***!
-  \***********************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-
-/***/ 0:
-/*!*******************************************!*\
-  !*** multi ./src/chat.js ./src/site.scss ***!
-  \*******************************************/
+/***/ 1:
+/*!***************************!*\
+  !*** multi ./src/chat.js ***!
+  \***************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /var/www/comfytheatre/node/src/chat.js */"./src/chat.js");
-module.exports = __webpack_require__(/*! /var/www/comfytheatre/node/src/site.scss */"./src/site.scss");
+module.exports = __webpack_require__(/*! /var/www/comfytheatre/node/src/chat.js */"./src/chat.js");
 
 
 /***/ })

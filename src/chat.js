@@ -4,7 +4,7 @@
 console.log('Script loaded');
 let source = null;
 const DOMPurify = require('dompurify');
-const URL = document.location.protocol + "//" + document.location.hostname;
+const URL = "https://comfytheatre.test"// + document.location.hostname;
 
 window.onload = () => {
   const chatEntryPoint = document.getElementById("chatEntryPoint");
@@ -54,7 +54,9 @@ function sendMessage() {
       method: "POST",
       credentials: 'include',
       headers: {
-        "content-type": "application/json"
+        "content-type": 'application/json',
+        "Access-Control-Allow-Origin": "https://comfytheatre.test",
+        "Access-Control-Allow-Credentials": true
       },
       body: JSON.stringify({
         msg: input.value
@@ -85,15 +87,21 @@ function quitChat() {
 function enterChat() {
   console.log('start sse')
 
-  const userName = document.getElementById("username")
-  userName.value = DOMPurify.sanitize(userName.value, {ALLOWED_TAGS: []})
+  var userName = document.getElementById("username")
 
-  document.cookie = `user=${userName.value}`;
+  console.log('CURRENT USERNAME: ' + userName.value);
+
+  var cleanUserName;
+  cleanUserName = DOMPurify.sanitize(userName.value, {ALLOWED_TAGS: []})
+
+  console.log('CLEANED USERNAME: ' + cleanUserName);
+
+  document.cookie = `user=${cleanUserName}`;
 
   chatEntryPoint.style.display = "none";
   chatControls.style.display = "block";
 
-  source = new EventSource(URL + ':4000/register');
+  source = new EventSource(URL + ':4000/register', {withCredentials: true});
 
   source.onerror = (e) => {
     console.log("EventSource failed", e);
