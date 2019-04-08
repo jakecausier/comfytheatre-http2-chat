@@ -18,7 +18,6 @@ const PUBLIC_PATH = path.join(__dirname, './public')
 
 const publicFiles = helper.getFiles(PUBLIC_PATH)
 
-
 // Push file
 function push (stream, path) {
   const file = publicFiles.get(path)
@@ -26,7 +25,6 @@ function push (stream, path) {
   if (!file) {
     return
   }
-
   stream.pushStream({ [HTTP2_HEADER_PATH]: path }, (err, pushStream, headers) => {
     pushStream.respondWithFD(file.fileDescriptor, file.headers)
   })
@@ -34,11 +32,11 @@ function push (stream, path) {
 
 const clients = {}; // <- map of registered users
 
-const broadCast = (user, msg) => {
+const broadCast = (user, avatar, msg, colour) => {
   var cleanMsg = DOMPurify.sanitize(msg, {ALLOWED_TAGS: ['b','i','u']});
   if (!!cleanMsg) {
     console.log(user, 'said:', cleanMsg);
-    Object.entries(clients).forEach(([clientId, res]) => res.write(`event: info\ndata: {"sender":"${user}","msg": "${cleanMsg}"}\n\n`, 'utf8'));
+    Object.entries(clients).forEach(([clientId, res]) => res.write(`event: info\ndata: {"sender":"${user}", "avatar": "${avatar}", "msg": "${cleanMsg}", "colour": "${colour}"}\n\n`, 'utf8'));
   }
 }
 
@@ -88,6 +86,7 @@ const onRequest = (req, res) => {
   if (req.headers[':method'] === 'POST' && reqPath === '/message') {
 
     const cookies = cookie.parse(req.headers.cookie)
+
     if (!cookies.user) {
       console.log('Unknown user tried to join')
       res.stream.respond({
@@ -102,16 +101,19 @@ const onRequest = (req, res) => {
 
     let jsonString = '';
     req.on('data', (data) => {
-        jsonString += data;
+      jsonString += data;
     });
 
     req.on('end', () => {
       const json = JSON.parse(jsonString);
-      broadCast(cookies.user, json.msg);
+
+      console.log(json);
+
+      broadCast(cookies.user, json.avatar, json.msg, json.colour);
     });
 
     res.stream.respond({
-      'Content-type': 'text/plain',
+      'Content-type': 'text/html',
       'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
       'Access-Control-Allow-Origin': 'https://comfytheatre.test',
       'Access-Control-Allow-Credentials': true,
@@ -135,7 +137,6 @@ const onRequest = (req, res) => {
     });
 
     const cookies = cookie.parse(req.headers.cookie)
-    console.log('cookies', cookies.user)
 
     clients[cookies.user] = res;  // <- Add this client to the broadcast list
     broadCastAdd(cookies.user);
