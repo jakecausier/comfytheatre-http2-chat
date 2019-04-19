@@ -25,19 +25,19 @@ function push (stream, path) {
   if (!file) {
     return
   }
-  stream.pushStream({ [HTTP2_HEADER_PATH]: path }, (err, pushStream, headers) => {
+  stream.pushStream({[HTTP2_HEADER_PATH]: path }, (err, pushStream, headers) => {
     pushStream.respondWithFD(file.fileDescriptor, file.headers)
   })
 }
 
-const clients = {}; // <- map of registered users
+const clients = {};         // Object of registered users
+const messageLimit = 50;    // Limit of how many messages to save
+var messageArray = [];      // Array of all our messages
 
-const broadCast = (user, avatar, msg, colour) => {
-  var cleanMsg = DOMPurify.sanitize(msg, {ALLOWED_TAGS: ['b','i','u']});
-  if (!!cleanMsg) {
-    console.log(user, 'said:', cleanMsg);
-    Object.entries(clients).forEach(([clientId, res]) => res.write(`event: info\ndata: {"sender":"${user}", "avatar": "${avatar}", "msg": "${cleanMsg}", "colour": "${colour}"}\n\n`, 'utf8'));
-  }
+
+const broadcast = (buffer) => {
+  var messages = JSON.stringify(messageArray);
+  Object.entries(clients).forEach(([clientId, res]) => res.write(`event: info\ndata: ${messages}\n\n`, 'utf8'));
 }
 
 const broadCastAdd = (user) => {
@@ -62,7 +62,7 @@ const onRequest = (req, res) => {
   if (req.headers[':method'] === 'OPTIONS') {
     res.writeHead(204, {
       'Access-Control-Allow-Headers': 'Content-Type, X-Requested-With, Access-Control-Allow-Credentials, Access-Control-Allow-Origin',
-      'Access-Control-Allow-Origin': 'https://comfytheatre.test',
+      'Access-Control-Allow-Origin': 'https://' + URL,
       'Access-Control-Allow-Credentials': true,
       'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
       'Access-Control-Max-Age': 2147483647,
@@ -74,7 +74,7 @@ const onRequest = (req, res) => {
   if (req.headers[':method'] === 'GET' && reqPath === '/users') {
     res.stream.respond({
       'Content-type': 'text/plain',
-      'Access-Control-Allow-Origin': 'https://comfytheatre.test',
+      'Access-Control-Allow-Origin': 'https://' + URL,
       'Access-Control-Allow-Credentials': true,
       ':status': 200
     });
@@ -91,7 +91,7 @@ const onRequest = (req, res) => {
       console.log('Unknown user tried to join')
       res.stream.respond({
         'Content-type': 'text/plain',
-        'Access-Control-Allow-Origin': 'https://comfytheatre.test',
+        'Access-Control-Allow-Origin': 'https://' + URL,
         'Access-Control-Allow-Credentials': true,
         ':status': 401
       });
@@ -107,15 +107,17 @@ const onRequest = (req, res) => {
     req.on('end', () => {
       const json = JSON.parse(jsonString);
 
-      console.log(json);
-
-      broadCast(cookies.user, json.avatar, json.msg, json.colour);
+      messageArray.push(json);
+      if (messageArray.length > messageLimit) {
+        messageArray.shift();
+      }
+      broadcast(messageArray);
     });
 
     res.stream.respond({
       'Content-type': 'text/html',
       'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
-      'Access-Control-Allow-Origin': 'https://comfytheatre.test',
+      'Access-Control-Allow-Origin': 'https://' + URL,
       'Access-Control-Allow-Credentials': true,
       ':status': 204
     });
@@ -129,7 +131,7 @@ const onRequest = (req, res) => {
     req.socket.setTimeout(2147483647); // MAX Integer
     res.writeHead(200, {
       'Content-type': 'text/event-stream',
-      'Access-Control-Allow-Origin': 'https://comfytheatre.test',
+      'Access-Control-Allow-Origin': 'https://' + URL,
       'Access-Control-Allow-Credentials': true,
       'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
       'Access-Control-Max-Age': 2147483647,
@@ -174,8 +176,8 @@ var serverCert = '/etc/letsencrypt/live/test.comfytheatre.co.uk/fullchain.pem';
 var serverKey = '/etc/letsencrypt/live/test.comfytheatre.co.uk/privkey.pem';
 
 if (URL == 'comfytheatre.test' || URL == 'localhost') {
-  serverCert = '/home/user/comfytheatre.test+3.pem';
-  serverKey = '/home/user/comfytheatre.test+3-key.pem';
+  serverCert = '/home/jake/comfytheatre.test.pem';
+  serverKey = '/home/jake/comfytheatre.test-key.pem';
 };
 
 const server = http2.createSecureServer({
@@ -188,6 +190,17 @@ server.listen(PORT, URL, (err) => {
     console.error(err)
     return
   }
-
   console.log(`Server listening on ${PORT}`)
 })
+
+function trim_nulls(data) {
+  var y;
+  for (var x in data) {
+    y = data[x];
+    if (y === "null" || y === null || y === "" || typeof y === "undefined" || (y instanceof Object && Object.keys(y).length == 0)) {
+      delete data[x];
+    }
+    if (y instanceof Object) y = trim_nulls(y);
+  }
+  return data;
+}

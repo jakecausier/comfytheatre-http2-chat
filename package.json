@@ -13,11 +13,12 @@
   "license": "MIT",
   "dependencies": {
     "bootstrap": "^4.3.1",
+    "circular-buffer": "^1.0.2",
     "cookie": "^0.3.1",
     "dompurify": "^1.0.10",
     "jquery": "^3.3.1",
     "jsdom": "^13.2.0",
-    "laravel-mix": "^4.0.14",
+    "laravel-mix": "^4.0.15",
     "mime-types": "^2.1.21",
     "popper.js": "^1.14.7"
   },
