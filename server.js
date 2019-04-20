@@ -38,6 +38,7 @@ var messageArray = [];      // Array of all our messages
 
 const broadcast = (buffer) => {
   var messages = JSON.stringify(messageArray);
+  console.log('Message:', messageArray[messageArray.length-1]);
   Object.entries(clients).forEach(([clientId, res]) => res.write(`event: info\ndata: ${messages}\n\n`, 'utf8'));
 }
 
@@ -146,7 +147,6 @@ const onRequest = (req, res) => {
           messageArray.shift();
         }
         broadcast(messageArray);
-        
       }
     });
 
@@ -179,6 +179,8 @@ const onRequest = (req, res) => {
     clients[cookies.user] = res;  // <- Add this client to the broadcast list
     broadCastAdd(cookies.user);
 
+    console.log(cookies.user);
+
     broadcast(messageArray);
 
     ((clientId) => {
@@ -203,9 +205,6 @@ const onRequest = (req, res) => {
   req.on('finish', () => console.log('con closed'))
 }
 
-
-//var serverCert = '/etc/letsencrypt/live/test.comfytheatre.co.uk/fullchain.pem';
-//var serverKey = '/etc/letsencrypt/live/test.comfytheatre.co.uk/privkey.pem';
 var serverCert = process.env.SERVER_CERT;
 var serverKey = process.env.SERVER_KEY;
 
