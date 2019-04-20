@@ -137,11 +137,17 @@ const onRequest = (req, res) => {
     req.on('end', () => {
       const json = JSON.parse(jsonString);
 
-      messageArray.push(json);
-      if (messageArray.length > messageLimit) {
-        messageArray.shift();
+      json.msg = DOMPurify.sanitize(json.msg, {ALLOWED_TAGS: []});
+
+      if (json.msg !== '') {
+
+        messageArray.push(json);
+        if (messageArray.length > messageLimit) {
+          messageArray.shift();
+        }
+        broadcast(messageArray);
+        
       }
-      broadcast(messageArray);
     });
 
     res.stream.respond({
