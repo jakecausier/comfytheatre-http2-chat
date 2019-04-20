@@ -32,7 +32,7 @@ function push (stream, path) {
 }
 
 const clients = {};         // Object of registered users
-const messageLimit = 50;    // Limit of how many messages to save
+const messageLimit = 25;    // Limit of how many messages to save
 var messageArray = [];      // Array of all our messages
 
 
@@ -80,6 +80,35 @@ const onRequest = (req, res) => {
       ':status': 200
     });
     res.stream.end(JSON.stringify({ userList: Object.keys(clients) }));
+    return;
+  }
+
+  /* Admin: Empty the message array */
+  if (req.headers[':method'] === 'POST' && reqPath === '/admin/clear') {
+
+    let jsonString = '';
+    req.on('data', (data) => {
+      jsonString += data;
+    });
+
+    req.on('end', () => {
+      const json = JSON.parse(jsonString);
+      
+      if (json.verify === process.env.ADMIN_KEY) {
+        console.log('Clearing chat...');
+        messageArray = [];
+        broadcast(messageArray);
+      }
+    });
+
+    res.stream.respond({
+      'Content-type': 'text/html',
+      'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
+      'Access-Control-Allow-Origin': 'https://' + URL,
+      'Access-Control-Allow-Credentials': true,
+      ':status': 204
+    });
+    res.stream.end();
     return;
   }
 
