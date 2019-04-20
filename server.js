@@ -143,6 +143,8 @@ const onRequest = (req, res) => {
     clients[cookies.user] = res;  // <- Add this client to the broadcast list
     broadCastAdd(cookies.user);
 
+    broadcast(messageArray);
+
     ((clientId) => {
       req.on("close", () => { // <- Remove this client when he disconnects
         delete clients[clientId]
