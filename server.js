@@ -1,19 +1,20 @@
 'use strict'
 
-const http2 = require('http2')
-const fs = require('fs')
-const path = require('path')
+const env = require('dotenv').config();
+const http2 = require('http2');
+const fs = require('fs');
+const path = require('path');
 const cookie = require('cookie');
-const helper = require('./src/helper')
+const helper = require('./src/helper');
 
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
 const window = (new JSDOM('')).window;
 const DOMPurify = createDOMPurify(window);
 
-const URL = 'comfytheatre.test';
 const { HTTP2_HEADER_PATH } = http2.constants
-const PORT = process.env.PORT || 4000
+const URL = process.env.SERVER_URL;
+const PORT = process.env.SERVER_PORT
 const PUBLIC_PATH = path.join(__dirname, './public')
 
 const publicFiles = helper.getFiles(PUBLIC_PATH)
@@ -157,14 +158,8 @@ const onRequest = (req, res) => {
   // File not found
   if (!file) {
     res.stream.respond({ 'content-type': 'text/html', ':status': 404 });
-    res.stream.end('<h1>Page Not Found</h1>');
+    res.stream.end('<h1>Wrong turn?</h1>');
     return
-  }
-
-  // Push with index.html
-  if (reqPath === '/index.html') {
-    push(res.stream, '/site.css')
-    push(res.stream, '/chat.js')
   }
 
   // Serve file
@@ -174,13 +169,10 @@ const onRequest = (req, res) => {
 }
 
 
-var serverCert = '/etc/letsencrypt/live/test.comfytheatre.co.uk/fullchain.pem';
-var serverKey = '/etc/letsencrypt/live/test.comfytheatre.co.uk/privkey.pem';
-
-if (URL == 'comfytheatre.test' || URL == 'localhost') {
-  serverCert = '/home/jake/comfytheatre.test.pem';
-  serverKey = '/home/jake/comfytheatre.test-key.pem';
-};
+//var serverCert = '/etc/letsencrypt/live/test.comfytheatre.co.uk/fullchain.pem';
+//var serverKey = '/etc/letsencrypt/live/test.comfytheatre.co.uk/privkey.pem';
+var serverCert = process.env.SERVER_CERT;
+var serverKey = process.env.SERVER_KEY;
 
 const server = http2.createSecureServer({
   cert: fs.readFileSync(path.join(serverCert)),
