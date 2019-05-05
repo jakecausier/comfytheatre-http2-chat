@@ -32,7 +32,7 @@ function push (stream, path) {
 }
 
 const clients = {};         // Object of registered users
-const messageLimit = 25;    // Limit of how many messages to save
+const messageLimit = 50;    // Limit of how many messages to save
 var messageArray = [];      // Array of all our messages
 
 
